@@ -17,10 +17,9 @@
 package container
 
 import (
-	"github.com/chaosblade-io/chaosblade-spec-go/spec"
-
 	"github.com/chaosblade-io/chaosblade-operator/channel"
 	"github.com/chaosblade-io/chaosblade-operator/exec/model"
+	"github.com/chaosblade-io/chaosblade-spec-go/spec"
 )
 
 type ResourceModelSpec struct {
@@ -36,7 +35,22 @@ func NewResourceModelSpec(client *channel.Client) model.ResourceExpModelSpec {
 
 	spec.AddFlagsToModelSpec(getResourceFlags, dockerModelSpecs...)
 	modelSpec.RegisterExpModels(dockerModelSpecs...)
+	addActionExamples(modelSpec)
 	return modelSpec
+}
+
+func addActionExamples(modelSpec *ResourceModelSpec) {
+	for _, expModelSpec := range modelSpec.ExpModelSpecs {
+		for _, commandSpec := range expModelSpec.Actions() {
+			if expModelSpec.Name() == "network" {
+				commandSpec.SetLongDesc("Kubernetes Container network scenes, same as the network scenes of the underlying resources")
+			} else if expModelSpec.Name() == "process" {
+				commandSpec.SetLongDesc("Kubernetes Container process scenes, same as the process scenes of the underlying resources")
+			} else if expModelSpec.Name() == "" {
+				commandSpec.SetLongDesc("For scenarios of container resources themselves under Kubernetes, such as deleting containers, it is important to note that to execute container scenarios, Pod must be determined first, so Pod related parameters need to be configured")
+			}
+		}
+	}
 }
 
 func getResourceFlags() []spec.ExpFlagSpec {

@@ -33,6 +33,7 @@ func NewCordonActionCommandSpec() spec.ExpActionCommandSpec {
 			ActionMatchers: []spec.ExpFlagSpec{},
 			ActionFlags:    []spec.ExpFlagSpec{},
 			ActionExecutor: &CordonExecutor{},
+			ActionExample: spec.Example {},
 		},
 	}
 }
@@ -49,7 +50,10 @@ func (*CordonActionCommandSpec) ShortDesc() string {
 	return "Cordon node"
 }
 
-func (*CordonActionCommandSpec) LongDesc() string {
+func (c *CordonActionCommandSpec) LongDesc() string {
+	if c.ActionLongDesc != "" {
+		return c.ActionLongDesc
+	}
 	return "Cordon node"
 }
 

@@ -46,6 +46,19 @@ func NewDeletePodActionSpec(client *channel.Client) spec.ExpActionCommandSpec {
 				},
 			},
 			ActionExecutor: &DeletePodActionExecutor{client: client},
+			ActionExample: spec.Example{
+				ExampleCommands: [] spec.ExampleCommand{
+					{
+						Annotation: "Deletes the POD under the specified default namespace that is app=guestbook",
+						Command: "blade create k8s pod-pod delete --labels app=guestbook --namespace default --evict-count 2 --kubeconfig config",
+					},
+
+					{
+						Annotation: "Query experimental status",
+						Command: "blade query k8s create 4d3caa0a99c3b2dd --kubeconfig config",
+					},
+				},
+			},
 		},
 	}
 }
@@ -62,8 +75,11 @@ func (*DeletePodActionSpec) ShortDesc() string {
 	return "Delete pods"
 }
 
-func (*DeletePodActionSpec) LongDesc() string {
-	return "Delete pods"
+func (d *DeletePodActionSpec) LongDesc() string {
+	if d.ActionLongDesc != "" {
+		return d.ActionLongDesc
+	}
+	return "Kubernetes Pod resource itself scenario, such as removing Pod"
 }
 
 type DeletePodActionExecutor struct {

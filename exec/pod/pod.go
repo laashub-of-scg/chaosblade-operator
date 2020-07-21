@@ -17,10 +17,9 @@
 package pod
 
 import (
-	"github.com/chaosblade-io/chaosblade-spec-go/spec"
-
 	"github.com/chaosblade-io/chaosblade-operator/channel"
 	"github.com/chaosblade-io/chaosblade-operator/exec/model"
+	"github.com/chaosblade-io/chaosblade-spec-go/spec"
 )
 
 type ResourceModelSpec struct {
@@ -36,7 +35,22 @@ func NewResourceModelSpec(client *channel.Client) model.ResourceExpModelSpec {
 
 	spec.AddFlagsToModelSpec(getResourceFlags, expModels...)
 	modelSpec.RegisterExpModels(expModels...)
+
+	addActionExamples(modelSpec)
 	return modelSpec
+}
+
+func addActionExamples(modelSpec *ResourceModelSpec) {
+	for _, expModelSpec := range modelSpec.ExpModelSpecs {
+		for _, commandSpec := range expModelSpec.Actions() {
+			if expModelSpec.Name() == "network" {
+				commandSpec.SetLongDesc("Kubernetes pod network scenarios, the same as the network scenario of basic resources")
+			}
+			if expModelSpec.Name() == "IO" {
+				commandSpec.SetLongDesc("kubernetes POD file system I/O exception scenario, can simulate the file on the specified path read and write exceptions, including delays, errors, etc. Note!! This scenario requires the activation-webhook -enable parameter. To use this feature, add --webhook-enable in the Chaosblade operator parameter, or specify it at installation time, such as helm installation: --set webhook. Enable =true specified.")
+			}
+		}
+	}
 }
 
 func getResourceFlags() []spec.ExpFlagSpec {

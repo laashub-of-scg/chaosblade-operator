@@ -72,6 +72,7 @@ func NewPodIOActionSpec(client *channel.Client) spec.ExpActionCommandSpec {
 				},
 			},
 			ActionExecutor: &PodIOActionExecutor{client: client},
+			ActionExample: spec.Example {},
 		},
 	}
 }
@@ -88,7 +89,10 @@ func (*PodIOActionSpec) ShortDesc() string {
 	return "Pod File System IO Exception"
 }
 
-func (*PodIOActionSpec) LongDesc() string {
+func (p *PodIOActionSpec) LongDesc() string {
+	if p.ActionLongDesc != "" {
+		return p.ActionLongDesc
+	}
 	return "Pod File System IO Exception"
 }
 

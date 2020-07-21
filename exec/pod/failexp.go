@@ -41,6 +41,7 @@ func NewFailPodActionSpec(client *channel.Client) spec.ExpActionCommandSpec {
 				&spec.ExpFlag{},
 			},
 			ActionExecutor: &FailPodActionExecutor{client: client},
+			ActionExample: spec.Example {},
 		},
 	}
 }
@@ -57,7 +58,10 @@ func (*FailPodActionSpec) ShortDesc() string {
 	return "Fail pods"
 }
 
-func (*FailPodActionSpec) LongDesc() string {
+func (f *FailPodActionSpec) LongDesc() string {
+	if f.ActionLongDesc != "" {
+		return f.ActionLongDesc
+	}
 	return "Fail pods"
 }
 

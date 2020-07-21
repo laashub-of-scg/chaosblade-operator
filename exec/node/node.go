@@ -17,10 +17,9 @@
 package node
 
 import (
-	"github.com/chaosblade-io/chaosblade-spec-go/spec"
-
 	"github.com/chaosblade-io/chaosblade-operator/channel"
 	"github.com/chaosblade-io/chaosblade-operator/exec/model"
+	"github.com/chaosblade-io/chaosblade-spec-go/spec"
 )
 
 type ResourceModelSpec struct {
@@ -37,7 +36,24 @@ func NewResourceModelSpec(client *channel.Client) model.ResourceExpModelSpec {
 	expModelSpecs := append(osModelSpecs, selfModelSpec)
 	spec.AddFlagsToModelSpec(getResourceFlags, expModelSpecs...)
 	modelSpec.RegisterExpModels(osModelSpecs...)
+	addActionExamples(modelSpec)
 	return modelSpec
+}
+
+func addActionExamples(modelSpec *ResourceModelSpec) {
+	for _, expModelSpec := range modelSpec.ExpModelSpecs {
+		for _, commandSpec := range expModelSpec.Actions() {
+			if expModelSpec.Name() == "network" {
+				commandSpec.SetLongDesc("The kubernetes Node network scenario is the same as the network scenario of the underlying resource")
+			} else if expModelSpec.Name() == "cpu" {
+				commandSpec.SetLongDesc("The kubernetes Node cpu scenario is the same as the cpu scenario of the underlying resource")
+			} else if expModelSpec.Name() == "process" {
+				commandSpec.SetLongDesc("The kubernetes Node process scenario is the same as the process scenario of the underlying resource")
+			} else if expModelSpec.Name() == "disk" {
+				commandSpec.SetLongDesc("The kubernetes Node disk scenario is the same as the disk scenario of the underlying resource")
+			}
+		}
+	}
 }
 
 func getResourceFlags() []spec.ExpFlagSpec {
